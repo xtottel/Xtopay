@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   // Generate checkoutId
   const checkoutId = crypto.randomBytes(5).toString('hex');
   const checkoutUrl = `https://pay.xtopay.co/${checkoutId}`;
-  const checkoutDirectUrl = `https://pay.xtopay.co/${checkoutId}/direct`;
+
   // Save payment in Supabase
   const { data: payment, error: paymentError } = await supabase
     .from('payment')
@@ -67,7 +67,6 @@ export async function POST(req: NextRequest) {
     data: {
       checkoutId,
       checkoutUrl,
-      checkoutDirectUrl,
       clientReference: body.clientReference,
     },
   });

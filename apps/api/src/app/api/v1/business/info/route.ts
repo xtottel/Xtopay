@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
 // Initialize Supabase client
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || '';
+const supabaseUrl = process.env.SUPABASE_URL || 'https://hgckzexwjwqpgdcghahd.supabase.co'; 
+const supabaseKey = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhnY2t6ZXh3andxcGdkY2doYWhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE2NDYyMjMsImV4cCI6MjA2NzIyMjIyM30.CADo9ci8fecehpfLJ2gHUhl4zxhQ6uR8HIEhv6A8UqY';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function POST(req: NextRequest) {
