@@ -42,6 +42,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@supabase/supabase-js':
+        specifier: ^2.50.3
+        version: 2.50.3
       '@xtopay/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -9421,7 +9424,7 @@ snapshots:
   '@types/glob@7.2.0':
     dependencies:
       '@types/minimatch': 6.0.0
-      '@types/node': 22.16.0
+      '@types/node': 24.0.10
 
   '@types/google.maps@3.58.1': {}
 
@@ -9496,7 +9499,7 @@ snapshots:
 
   '@types/through@0.0.33':
     dependencies:
-      '@types/node': 22.16.0
+      '@types/node': 24.0.10
 
   '@types/tinycolor2@1.4.6': {}
 

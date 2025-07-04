@@ -1,31 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import path from 'path';
-import fs from 'fs/promises';
+import { supabase } from '../../../../../lib/supabase';
 import crypto from 'crypto';
-
-// Path to merchants.json (relative to monorepo root)
-const MERCHANTS_PATH = path.resolve(process.cwd(), '../../pay/src/app/data/merchants.json');
-// Path to payments.json (for persistent storage)
-const PAYMENTS_PATH = path.resolve(process.cwd(), '../../pay/src/app/data/payments.json');
-
-async function getMerchants() {
-  try {
-    const data = await fs.readFile(MERCHANTS_PATH, 'utf-8');
-    return JSON.parse(data);
-  } catch (e) {
-    return [];
-  }
-}
-
-async function savePayment(payment: any) {
-  let payments = [];
-  try {
-    const data = await fs.readFile(PAYMENTS_PATH, 'utf-8');
-    payments = JSON.parse(data);
-  } catch (e) {}
-  payments.push(payment);
-  await fs.writeFile(PAYMENTS_PATH, JSON.stringify(payments, null, 2), 'utf-8');
-}
 
 export async function POST(req: NextRequest) {
   const auth = req.headers.get('authorization');
@@ -41,9 +16,14 @@ export async function POST(req: NextRequest) {
   if (!api_id || !api_key) {
     return NextResponse.json({ error: 'Invalid API credentials' }, { status: 401 });
   }
-  const merchants = await getMerchants();
-  const merchant = merchants.find((m: any) => m.api_id === api_id && m.api_key === api_key);
-  if (!merchant) {
+  // Find merchant in Supabase
+  const { data: merchant, error: merchantError } = await supabase
+    .from('merchant')
+    .select('*')
+    .eq('apiId', api_id)
+    .eq('apiKey', api_key)
+    .single();
+  if (merchantError || !merchant) {
     return NextResponse.json({ error: 'Business not found or invalid credentials' }, { status: 403 });
   }
   const body = await req.json();
@@ -56,21 +36,39 @@ export async function POST(req: NextRequest) {
   // Generate checkoutId
   const checkoutId = crypto.randomBytes(5).toString('hex');
   const checkoutUrl = `https://pay.xtopay.co/${checkoutId}`;
-  // Save payment
-  const payment = {
-    ...body,
-    checkoutId,
-    status: 'pending',
-    createdAt: new Date().toISOString(),
-    merchant: merchant.business_id
-  };
-  await savePayment(payment);
+  const checkoutDirectUrl = `https://pay.xtopay.co/${checkoutId}/direct`;
+  // Save payment in Supabase
+  const { data: payment, error: paymentError } = await supabase
+    .from('payment')
+    .insert([
+      {
+        amount: body.amount,
+        description: body.description,
+        callbackUrl: body.callbackUrl,
+        returnUrl: body.returnUrl,
+        cancelUrl: body.cancelUrl,
+        clientReference: body.clientReference,
+        payeeName: body.payeeName,
+        payeePhone: body.payeePhone,
+        payeeEmail: body.payeeEmail,
+        channel: body.channel,
+        status: 'pending',
+        checkoutId,
+        merchantId: merchant.id,
+      },
+    ])
+    .select()
+    .single();
+  if (paymentError) {
+    return NextResponse.json({ error: 'Failed to create payment', details: paymentError.message }, { status: 500 });
+  }
   return NextResponse.json({
     status: 'success',
     data: {
       checkoutId,
       checkoutUrl,
-      clientReference: body.clientReference
-    }
+      checkoutDirectUrl,
+      clientReference: body.clientReference,
+    },
   });
 }
