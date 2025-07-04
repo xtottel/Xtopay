@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import {  Loader2, Lock, ShieldCheck, X } from "lucide-react";
 import Link from "next/link";
-import CheckoutDemoHero from "./components/CheckoutDemoHero";
+
 
 const Demo = () => {
   const [form, setForm] = useState({
@@ -36,7 +36,6 @@ const Demo = () => {
 
   return (
     <>
-      <CheckoutDemoHero />
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6">
         <div className="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
           {/* Header */}

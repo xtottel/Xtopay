@@ -1,5 +1,5 @@
 {
-  "name": "sendexa",
+  "name": "xtopay",
   "private": true,
   "scripts": {
     "build": "turbo run build",
