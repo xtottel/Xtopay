@@ -156,7 +156,7 @@ const Demo = () => {
         {/* Iframe Modal */}
         {showModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-            <div className="relative w-120 max-w-4xl bg-white rounded-xl shadow-2xl overflow-hidden dark:bg-gray-800 mx-4">
+            <div className="relative w-150 max-w-4xl bg-white rounded-xl shadow-2xl overflow-hidden dark:bg-gray-800 mx-4">
               <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
                 <div className="flex items-center space-x-2">
                   <ShieldCheck className="h-5 w-5 text-[#513b7e] dark:text-blue-400" />

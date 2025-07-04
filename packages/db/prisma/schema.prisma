@@ -1,0 +1,41 @@
+// Xtopay Prisma schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../node_modules/@prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Merchant {
+  id            String   @id @default(cuid())
+  businessId    String   @unique
+  apiId         String
+  apiKey        String
+  name          String
+  logo          String?
+  createdAt     DateTime @default(now())
+  payments      Payment[]
+}
+
+model Payment {
+  id                String   @id @default(cuid())
+  amount            Float
+  description       String
+  callbackUrl       String
+  returnUrl         String
+  cancelUrl         String
+  clientReference   String   @unique
+  payeeName         String?
+  payeePhone        String?
+  payeeEmail        String?
+  channel           String?
+  status            String   @default("pending")
+  checkoutId        String   @unique
+  merchant          Merchant @relation(fields: [merchantId], references: [id])
+  merchantId        String
+  createdAt         DateTime @default(now())
+}

@@ -14,20 +14,62 @@ import {
   Smartphone,
   Wallet,
   HandCoins,
-  // X,
-  // Headphones,
 } from "lucide-react";
-//import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ReportProblemModal } from "./ReportProblemModal";
 import Link from "next/link";
 
 type PaymentMethod = "card" | "mobileMoney" | "wallet";
 
-const PaymentOptionSelector: React.FC<{ cancelUrl?: string }> = ({
-  // cancelUrl = "https://xtopay.co/",
+interface PaymentOptionSelectorProps {
+  cancelUrl?: string;
+  uuid?: string;
+}
+
+type PaymentData = {
+  amount: number;
+  currency: string;
+  merchantName: string;
+  merchantEmail: string;
+  phoneNumber: string;
+  name?: string;
+};
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "https://api.xtopay.co";
+
+const PaymentOptionSelector: React.FC<PaymentOptionSelectorProps> = ({
+  uuid,
 }) => {
-  // const router = useRouter();
+  const [paymentData, setPaymentData] = React.useState<PaymentData | null>(
+    null
+  );
+  const [loadError, setLoadError] = React.useState<string | null>(null);
+  React.useEffect(() => {
+    if (!uuid) return;
+    setLoadError(null);
+    // Fetch payment details from new API (simulate real DB)
+    fetch(`${API_BASE}/v1/checkout/status/${uuid}`, {
+      headers: {
+        Authorization: `Basic ${btoa("api_merchant1:key_merchant1")}`,
+      },
+    })
+      .then((res) => (res.ok ? res.json() : Promise.reject("Not found")))
+      .then((data) => {
+        // Adapt to your PaymentData type if needed
+        setPaymentData({
+          amount: data.data.amount,
+          currency: data.data.currency || "GHS",
+          merchantName: data.data.merchantName || "Demo Merchant",
+          merchantEmail: data.data.merchantEmail || "merchant@example.com",
+          phoneNumber: data.data.customerPhone || "",
+          name: data.data.payeeName || "",
+        });
+      })
+      .catch(() => {
+        setPaymentData(null);
+        setLoadError("Payment not found or expired.");
+      });
+  }, [uuid]);
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(
     null
   );
@@ -64,8 +106,8 @@ const PaymentOptionSelector: React.FC<{ cancelUrl?: string }> = ({
         Math.random() > 0.5
           ? "success"
           : Math.random() > 0.5
-          ? "failed"
-          : "insufficient";
+            ? "failed"
+            : "insufficient";
       setModalState({
         isOpen: true,
         status,
@@ -73,25 +115,17 @@ const PaymentOptionSelector: React.FC<{ cancelUrl?: string }> = ({
           status === "success"
             ? "Payment Successful"
             : status === "failed"
-            ? "Verification Failed"
-            : "Insufficient Funds",
+              ? "Verification Failed"
+              : "Insufficient Funds",
         description:
           status === "success"
             ? "Your payment has been verified and completed successfully."
             : status === "failed"
-            ? "The code you entered is invalid. Please try again."
-            : "You don't have enough funds to complete this transaction.",
+              ? "The code you entered is invalid. Please try again."
+              : "You don't have enough funds to complete this transaction.",
       });
     }, 1500);
   };
-
-  // const handleCancel = () => {
-  //   router.push(cancelUrl);
-  // };
-
-  // const handleSupport = () => {
-  //   setShowReportModal(true);
-  // };
 
   const SecurityBadge = () => (
     <div className="flex justify-center">
@@ -114,15 +148,34 @@ const PaymentOptionSelector: React.FC<{ cancelUrl?: string }> = ({
 
   return (
     <section className="mx-auto max-w-md px-4 py-8 sm:py-12">
+      {/* For debugging/demo: show UUID if present */}
+      {uuid && (
+        <div className="mb-4 text-xs text-gray-500 dark:text-gray-400 text-center">
+          Payment UUID: <span className="font-mono">{uuid}</span>
+        </div>
+      )}
       <div className="space-y-6">
-        <PaymentDetails
-          amount={10.0}
-          currency="GHS"
-          merchantName="Xtopay Cares"
-          merchantLogo="/merchant/favicon.png"
-          merchantEmail="cares@xtopay.org"
-          phoneNumber="0240000000"
-        />
+        {loadError ? (
+          <div className="text-center text-red-500 dark:text-red-400">
+            {loadError}
+          </div>
+        ) : paymentData ? (
+          <>
+            <PaymentDetails
+              amount={paymentData.amount}
+              currency={paymentData.currency}
+              merchantName={paymentData.merchantName}
+              merchantLogo="/merchant/favicon.png"
+              merchantEmail={paymentData.merchantEmail}
+              phoneNumber={paymentData.phoneNumber}
+            />
+            {/* Payer name intentionally not displayed */}
+          </>
+        ) : (
+          <div className="text-center text-gray-500 dark:text-gray-400">
+            Loading payment details...
+          </div>
+        )}
 
         {showOtp ? (
           <div className="space-y-6">
@@ -225,24 +278,6 @@ const PaymentOptionSelector: React.FC<{ cancelUrl?: string }> = ({
             )}
           </div>
         )}
-
-        {/* <div className="flex justify-center gap-4">
-          <button
-            onClick={handleCancel}
-            className="flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-          >
-            <X className="h-4 w-4" />
-            Cancel Payment
-          </button>
-
-          <button
-            onClick={handleSupport}
-            className="flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-          >
-            <Headphones className="h-4 w-4" />
-            Report Problem
-          </button>
-        </div> */}
 
         <SecurityBadge />
       </div>

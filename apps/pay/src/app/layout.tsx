@@ -1,7 +1,7 @@
 import "../styles/globals.css";
 import { Metadata } from "next";
 import { Outfit } from "next/font/google";
-import type { Viewport } from 'next'
+//import type { Viewport } from 'next'
  
 
 const outfit = Outfit({
@@ -9,9 +9,9 @@ const outfit = Outfit({
   subsets: ["latin"],
 });
 
-export const viewport: Viewport = {
-  themeColor: '#16335c',
-}
+// export const viewport: Viewport = {
+//   themeColor: '#16335c',
+// }
 
 export const metadata: Metadata = {
   title: "Xtopay Checkout",

@@ -1,0 +1,200 @@
+Great — now that you want your **Xtopay API documentation** to follow **Hubtel’s Online Checkout** format, here’s what we’ll do:
+
+---
+
+## ✅ Let's Create a `checkout.md` (or Docs Page)
+
+We’ll organize your API like this:
+
+---
+
+### 📘 Xtopay Checkout API
+
+**Last updated: July 4th, 2025**
+
+---
+
+## 🔍 Overview
+
+The Xtopay Checkout API allows merchants to collect online payments via:
+
+* Mobile Money (MTN, Vodafone, AirtelTigo)
+* Bank Card (Visa, MasterCard)
+* Local Wallets (Zeepay, G-Money, etc.)
+* QR Code (GhQR)
+
+Merchants can choose between:
+
+* **Redirect Checkout** (customer is redirected to Xtopay)
+* **Onsite Checkout** (embed Xtopay in an iframe or modal)
+
+---
+
+## 🛒 Redirect Checkout — How it Works
+
+1. Customer clicks the “Pay” button on the merchant website.
+2. Merchant sends a request to Xtopay to initiate the payment.
+3. Xtopay returns a `checkoutUrl`.
+4. Customer is redirected to the `checkoutUrl`.
+5. Customer chooses a payment method and completes payment.
+6. Customer is redirected to the merchant's `returnUrl`.
+7. Xtopay sends a callback to the merchant’s `callbackUrl`.
+
+---
+
+## 🖼️ Onsite Checkout — How it Works
+
+1. Merchant initiates the checkout via API.
+2. The `checkoutDirectUrl` is returned in the response.
+3. Merchant embeds this URL inside an iframe or modal.
+4. Customer completes payment within the merchant's site.
+5. Callback is sent, and customer stays on the same page.
+
+---
+
+## 🔁 Payment Flow (Both Modes)
+
+```mermaid
+sequenceDiagram
+User ->> Merchant Site: Clicks Pay
+Merchant Site ->> Xtopay API: POST /v1/checkout/initiate
+Xtopay API -->> Merchant: checkoutUrl / checkoutDirectUrl
+User ->> Xtopay: Completes Payment
+Xtopay ->> Merchant: Callback to callbackUrl
+User ->> Merchant: Redirect to returnUrl
+```
+
+---
+
+## 🧾 API: Initiate Checkout
+
+**Endpoint:** `POST https://api.xtopay.com/v1/checkout/initiate`
+**Auth:** Basic Auth (`base64(api_id:api_key)`)
+**Content-Type:** `application/json`
+
+### Request Body
+
+| Field             | Type   | Required | Description                                  |
+| ----------------- | ------ | -------- | -------------------------------------------- |
+| `amount`          | Float  | ✅ Yes    | Amount to charge (e.g., 10.00)               |
+| `description`     | String | ✅ Yes    | Description of the item or service           |
+| `callbackUrl`     | String | ✅ Yes    | URL to receive final payment status          |
+| `returnUrl`       | String | ✅ Yes    | Where to redirect the customer after payment |
+| `cancelUrl`       | String | ✅ Yes    | Redirect URL if user cancels                 |
+| `clientReference` | String | ✅ Yes    | Unique transaction ID (max 32 chars)         |
+| `payeeName`       | String | Optional | Customer’s name                              |
+| `payeePhone`      | String | Optional | Customer’s mobile number                     |
+| `payeeEmail`      | String | Optional | Customer’s email address                     |
+| `channel`         | String | Optional | `mtn`, `vodafone`, `airteltigo`, etc.        |
+
+### Sample Request
+
+```json
+{
+  "amount": 100,
+  "description": "Online Shoe Order",
+  "callbackUrl": "https://merchant.com/callback",
+  "returnUrl": "https://merchant.com/thank-you",
+  "cancelUrl": "https://merchant.com/cancelled",
+  "clientReference": "INV-9823",
+  "payeeName": "Collins Joe",
+  "payeePhone": "0541234567"
+}
+```
+
+### Sample Response
+
+```json
+{
+  "status": "success",
+  "data": {
+    "checkoutId": "9f28a1fe8e",
+    "checkoutUrl": "https://pay.xtopay.com/9f28a1fe8e",
+    "checkoutDirectUrl": "https://pay.xtopay.com/9f28a1fe8e/direct",
+    "clientReference": "INV-9823"
+  }
+}
+```
+
+---
+
+## 🔔 Checkout Callback
+
+When a transaction completes, Xtopay sends a `POST` to your `callbackUrl`.
+
+### Sample Callback Payload
+
+```json
+{
+  "status": "Success",
+  "data": {
+    "checkoutId": "9f28a1fe8e",
+    "clientReference": "INV-9823",
+    "amount": 100.0,
+    "paymentMethod": "mobilemoney",
+    "channel": "mtn",
+    "customerPhone": "0541234567",
+    "description": "Payment approved",
+    "transactionReference": "mtn-2398234",
+    "xtopayTransactionId": "XT-83928238"
+  }
+}
+```
+
+---
+
+## ✅ Transaction Status Check
+
+**Endpoint:**
+`GET https://api.xtopay.com/v1/checkout/status/{clientReference}`
+**Authorization:** Basic Auth
+**Use When:** You don’t receive callback within 5 minutes.
+
+### Sample Response (Paid)
+
+```json
+{
+  "status": "Paid",
+  "data": {
+    "transactionId": "XT-83928238",
+    "externalId": "mtn-2398234",
+    "paymentMethod": "mobilemoney",
+    "amount": 100,
+    "charges": 2,
+    "amountAfterCharges": 98
+  }
+}
+```
+
+---
+
+## 🔐 Response Codes
+
+| Code | Meaning                        | Action Needed                 |
+| ---- | ------------------------------ | ----------------------------- |
+| 0000 | Success                        | Proceed                       |
+| 2001 | Payment processor error        | Retry after a few minutes     |
+| 2050 | MTN Insufficient funds         | Customer should top up wallet |
+| 2100 | Phone is off                   | Retry later                   |
+| 3009 | Merchant account not available | Check credentials             |
+| 4101 | Authorization denied           | Invalid API ID/key            |
+| 4505 | Already refunded               | No action needed              |
+
+---
+
+## ✅ Coming Soon
+
+* Webhooks for recurring payments
+* Invoice links with auto-expiry
+* Refund API
+
+---
+
+Would you like this converted into:
+
+* A Markdown file for GitHub (`checkout.md`)
+* A styled page for `docs.xtopay.com`
+* An OpenAPI / Swagger spec
+* Or a JSON file for internal Copilot context?
+
+Let me know and I’ll generate exactly what you need.
