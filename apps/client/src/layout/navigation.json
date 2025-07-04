@@ -1,0 +1,111 @@
+{
+  "navItems": [
+    {
+      "icon": "GridIcon",
+      "name": "Dashboard",
+      "path": "/",
+      "description": "Business overview and quick actions"
+    },
+    {
+      "icon": "PieChart",
+      "name": "Analytics",
+      "description": "Transaction insights and reporting",
+      "subItems": [
+        { "name": "Transaction Reports", "path": "/analytics/transactions" },
+        { "name": "Settlement Summary", "path": "/analytics/settlements" }
+      ]
+    },
+    {
+      "icon": "CreditCard",
+      "name": "Payments",
+      "description": "Accept and manage payments",
+      "subItems": [
+        { "name": "Receive Payments", "path": "/payments/receive" },
+        { "name": "Payment Pages", "path": "/payments/pages" },
+        { "name": "Transaction Log", "path": "/payments/transactions" },
+        { "name": "Refunds", "path": "/payments/refunds" }
+      ]
+    },
+    {
+      "icon": "ReceiptCent",
+      "name": "Invoicing",
+      "description": "Create and track invoices",
+      "subItems": [
+        { "name": "Create Invoice", "path": "/invoices/new" },
+        { "name": "Invoice List", "path": "/invoices" },
+        { "name": "Recurring Invoices", "path": "/invoices/recurring" }
+      ]
+    },
+    {
+      "icon": "Repeat",
+      "name": "Subscriptions",
+      "description": "Manage recurring billing",
+      "subItems": [
+        { "name": "Subscription Plans", "path": "/subscriptions/plans" },
+        { "name": "Active Subscribers", "path": "/subscriptions/customers" },
+        { "name": "Subscription Analytics", "path": "/subscriptions/analytics" }
+      ]
+    },
+    {
+      "icon": "Package",
+      "name": "Products",
+      "description": "Manage your product catalog",
+      "subItems": [
+        { "name": "Product List", "path": "/products" },
+        { "name": "Create Product", "path": "/products/new" }
+      ]
+    },
+    {
+      "icon": "ShoppingCart",
+      "name": "Orders",
+      "description": "Track and manage customer orders",
+      "subItems": [
+        { "name": "Order List", "path": "/orders" },
+        { "name": "Create Order", "path": "/orders/new" }
+      ]
+    },
+    {
+      "icon": "Wallet",
+      "name": "Settlements",
+      "description": "Fund transfers to your bank",
+      "subItems": [
+        { "name": "Initiate Payout", "path": "/payouts/initiate" },
+        { "name": "Payout Status", "path": "/settlements" },
+        { "name": "Payout Schedule", "path": "/settlements/schedule" },
+        { "name": "Bank Accounts", "path": "/settlements/accounts" }
+      ]
+    },
+    {
+      "icon": "Users",
+      "name": "Customers",
+      "path": "/customers",
+      "description": "Manage your customer database"
+    }
+  ],
+
+  "othersItems": [
+    {
+      "icon": "Settings",
+      "name": "Account Settings",
+      "path": "/account",
+      "subItems": [
+        { "name": "Business Profile", "path": "/account/profile" },
+        { "name": "Team Members", "path": "/account/team" }
+      ]
+    },
+    {
+      "icon": "CodeXml",
+      "name": "Developers",
+      "path": "/developers",
+      "subItems": [
+        { "name": "API Keys", "path": "/developers/api" },
+        
+        {
+          "name": "Integration Docs",
+          "path": "https://docs.example.com",
+          "external": true
+        }
+      ]
+    }
+  ]
+}

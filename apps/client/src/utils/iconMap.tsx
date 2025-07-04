@@ -1,0 +1,45 @@
+import {
+  LayoutGrid,
+  MessageCircle,
+  LockKeyhole,
+  Mail,
+  CreditCard,
+  User,
+  KeyRound,
+  PieChart,
+  Users,
+  Hash,
+  Wallet,
+  Repeat,
+  BarChart,
+  Package,
+  ReceiptCent,
+  Settings,
+  ShoppingCart,
+  CodeXml,
+} from "lucide-react";
+import { JSX } from "react";
+import { SiContactlesspayment } from "react-icons/si";
+
+export const iconMap: Record<string, JSX.Element> = {
+  GridIcon: <LayoutGrid size={18} />,
+  MessageCircle: <MessageCircle size={18} />,
+  LockKeyhole: <LockKeyhole size={18} />,
+  MailIcon: <Mail size={18} />,
+  CreditCard: <CreditCard size={18} />,
+  User: <User size={18} />,
+  KeyRound: <KeyRound size={18} />,
+  PieChart: <PieChart size={18} />,
+  Users: <Users size={18} />,
+  Hash: <Hash size={18} />,
+  Wallet: <Wallet size={18} />,
+  Repeat: <Repeat size={18} />,
+  BarChart: <BarChart size={18} />,
+  Package: <Package size={18} />,
+  ReceiptCent: <ReceiptCent size={18} />,
+  Settings: <Settings size={18} />,
+  CodeXml: <CodeXml size={18} />,
+  Contactless: <SiContactlesspayment size={18} />,
+  ShoppingCart: <ShoppingCart size={18} />,
+
+};
